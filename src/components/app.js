@@ -1,13 +1,37 @@
 import React from 'react';
 import countries from '../countries.json';
 import population from '../population.json';
+import Flyout from './flyout';
+import LineChart from './linechart';
 
 // Victory Components
-import { VictoryLine, VictoryLabel, VictoryChart } from "victory";
+import { 
+  VictoryLine, 
+  VictoryLabel, 
+  VictoryChart,
+  VictoryScatter,
+  VictoryAxis
+} from 'victory';
 
 export default class App extends React.Component {
+
+  constructor(props) {
+    super(props);
+    
+    this.state = {
+      worldPopul: 0
+    }
+  }
+
+  componentDidMount() {
+    this.setState({
+      worldPopul: this._currentTotalPopulation(population)
+    });
+    console.log(this.state.worldPopul);
+    console.log(this._currentTotalPopulation(population));
+  }
   
-  _getCountryData(countryCode = 'SVK') {
+  _getCountryData(countryCode = 'ABW') {
     return population.find(country => {
       return country.FIELD2 === countryCode
     })
@@ -25,62 +49,59 @@ export default class App extends React.Component {
 
   _getGraphData(header, countryData) {
     let data = header.map(x => {
-      return { x: x }
+      return { x: x };
     });
 
     countryData.map((int,index) => {
-      return data[index].y = int
+      return data[index].y = int;
     });
     return data;
   }
 
   _currentTotalPopulation(population) {
     let countriesPopulation = population.map(country => {
-      return country.FIELD60
+      return Math.floor(country.FIELD60);
     }).slice(1)
 
-    console.log(countriesPopulation);
-
     return countriesPopulation.reduce((sum,int) => {
-      return sum + int
+      return sum + int;
     }, 0);
   }
 
   render () {
-    // console.log("Hello World!");
-    // console.log(countries[0].name);
-    // console.log(population[1].FIELD5)
-    // console.log(this._getCountryData()); 
-    // console.log(this._getObjectDataToArray(this._getCountryData()));
-    // console.log(this._getObjectDataToArray(population[0]));
-    // console.log(
-    //   this._getGraphData(
-    //     this._getObjectDataToArray(population[0]),
-    //     this._getObjectDataToArray(this._getCountryData())
-    //   )
-    // );
-    console.log(this._currentTotalPopulation(population));
-
 
     return (
-      <div>
-        <h1>Welcome here!!!</h1>
-        <VictoryChart>
-        <VictoryLine
-          data={
-            this._getGraphData(
-              this._getObjectDataToArray(population[0]),
-              this._getObjectDataToArray(this._getCountryData())
-            )
-          }
-        />
-        </VictoryChart>  
+      <div className="container main">
+        <h1>World population analysis</h1>
+          <div className="">
+            <div className="card">
+              <div className="card-header">
+                World Population
+              </div>
+              <div className="card-block">
+                <h2 className="card-title">{this.state.worldPopul.toLocaleString()}</h2>
+              </div>
+            </div>
+          </div>
 
-        <VictoryChart>
-          <VictoryLine
-            y={(data) => 1 * data.x * data.x}/>
-        </VictoryChart>
-      </div>
+          <LineChart 
+            data={
+              this._getGraphData(
+                this._getObjectDataToArray(population[0]),
+                this._getObjectDataToArray(this._getCountryData())
+              )
+            }
+            countryData={this._getObjectDataToArray(this._getCountryData())}
+          />
+
+
+          
+        
+
+
+
+      </div> 
+      
     )
   }
 }
