@@ -3,6 +3,8 @@ import countries from '../countries.json';
 import population from '../population.json';
 import Flyout from './flyout';
 import LineChart from './linechart';
+import Select from 'react-select';
+import Card from './card';
 
 // Victory Components
 import { 
@@ -19,7 +21,12 @@ export default class App extends React.Component {
     super(props);
     
     this.state = {
-      worldPopul: 0
+      worldPopul: 0,
+      countryPolul: 0,
+      graphData: this._getGraphData(
+                  this._getObjectDataToArray(population[0]),
+                  this._getObjectDataToArray(this._getCountryData())
+                 )
     }
   }
 
@@ -27,14 +34,18 @@ export default class App extends React.Component {
     this.setState({
       worldPopul: this._currentTotalPopulation(population)
     });
-    console.log(this.state.worldPopul);
-    console.log(this._currentTotalPopulation(population));
   }
   
   _getCountryData(countryCode = 'ABW') {
     return population.find(country => {
       return country.FIELD2 === countryCode
     })
+  }
+
+  _getCountiesData(population, field) {
+    return population.map(country => {
+      return country[field];
+    }).slice(1);
   }
 
   _getObjectDataToArray(obj) {
@@ -68,37 +79,67 @@ export default class App extends React.Component {
     }, 0);
   }
 
+
+  _logChange(val) {
+    console.log("Selected: " + val);
+    console.log(this._getObjectDataToArray(population[0]));
+    this.setState({
+      graphData:  this._getGraphData(
+                    this._getObjectDataToArray(population[0]),
+                    this._getObjectDataToArray(this._getCountryData(val))
+                  )
+    });
+  }
+
+  // populate array of object with properties value and label
+  // [
+  //   { value: 'IRL', label: 'Ireland' },
+  //   { value: 'CAN', label: 'Canada' }
+  // ]  
+  _selectOptionData() {
+    //console.log(this._getCountiesData(population, "FIELD2"));
+    let data = this._getCountiesData(population, "FIELD2").map(country => {
+      return {value: country}
+    });
+    
+    let dataName = this._getCountiesData(population, "FIELD1");
+    data.map((country,index) => {
+      return data[index].label = dataName[index];
+    });
+    //console.log(data);
+    return data;
+  }
+
   render () {
+    var options = this._selectOptionData();
+    //console.log(this._selectOptionData());
 
     return (
       <div className="container main">
-        <h1>World population analysis</h1>
+        <h1>World population</h1>
           <div className="">
-            <div className="card">
-              <div className="card-header">
-                World Population
-              </div>
-              <div className="card-block">
-                <h2 className="card-title">{this.state.worldPopul.toLocaleString()}</h2>
-              </div>
-            </div>
+            <Card 
+              amount={this.state.worldPopul.toLocaleString()}
+            />
           </div>
 
+          <Select
+            name="form-field-name"
+            maxHeight="300"
+            value="Select Country"
+            placeholder="Select Country"
+            options={options}
+            onChange={this._logChange.bind(this)}
+          />
+
           <LineChart 
-            data={
-              this._getGraphData(
-                this._getObjectDataToArray(population[0]),
-                this._getObjectDataToArray(this._getCountryData())
-              )
-            }
+            data={this.state.graphData}
             countryData={this._getObjectDataToArray(this._getCountryData())}
           />
 
 
           
-        
-
-
+      
 
       </div> 
       
