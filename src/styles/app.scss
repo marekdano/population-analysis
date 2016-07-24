@@ -1,13 +1,22 @@
 
-h1 {
-  color: blue;
+body {
+  background: #fafcfe;
 }
 
 .main {
-  width: 600px;
-  margin-top: 10%;
+  padding-top: 70px;
+  margin: 0 auto;
+
+  h1 {
+    margin-bottom: 30px; 
+  } 
 }
 
 .Select-placeholder {
   color: black;
 }
+
+.card-header {
+  background: #f1f1f1;
+}
+

@@ -17,26 +17,32 @@ export default class LineChart extends React.Component {
   }
 
   render() {
+    const chartLineColor = "#1ABC9C"; 
+    const axisColor = "#545454";
+
     const style = {
       chart: {
-        parent: { paddingLeft: 40 }
+        parent: { 
+          paddingLeft: 40,
+          backgroundColor: "white",
+        }
       },
       axis: {
         axis: { 
-          stroke: "#756f6a", 
+          stroke: axisColor, 
           strokeWidth: 1
         }, 
         grid: { 
-          stroke: "grey", 
-          opacity: 0.15
+          stroke: "#D3D3D3", 
+          opacity: 0.3
         }, 
         ticks: {
-          stroke: "grey", 
+          stroke: axisColor, 
           strokeWidth: 1
         }, 
         tickLabels: {
           fontSize: 10, 
-          fill: "red", 
+          fill: axisColor, 
           padding: 5
         }, 
         axisLabel: {
@@ -48,18 +54,18 @@ export default class LineChart extends React.Component {
         data: {
           stroke: "teal",
           fill: "white",
-          strokeWidth: 1
+          strokeWidth: 1.5
         },
         labels: {
           fill: "black",
           padding: 18,
-          backgroundColor: "red"
+          
         }
       },
       line: {
         data: {
-          stroke: "#822722",
-          strokeWidth: 1
+          stroke: chartLineColor,
+          strokeWidth: 1.5
         }
       }
     }  
@@ -101,8 +107,6 @@ export default class LineChart extends React.Component {
                     {
                       target: "labels",
                       mutation: () => {
-                        //console.log(this);
-
                         return {active: true};
                       }
                     }, {

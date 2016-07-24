@@ -25,7 +25,7 @@ export default class App extends React.Component {
       yearWorldPopul: "Select Year",
       countryPopul: 0,
       yearCountryPopul: "Select Year",
-      country: "",
+      countryCode: "",
       graphData: this._populateGraphData(
                   this._convertObjectDataToArray(population[0]),
                   this._convertObjectDataToArray(this._getCountryData())
@@ -35,7 +35,8 @@ export default class App extends React.Component {
 
   componentDidMount() {
     this.setState({
-      country: "ABW"
+      countryCode: "ABW",
+      country: "Aruba"
     });
   }
 
@@ -87,6 +88,20 @@ export default class App extends React.Component {
   }
 
 
+  /*
+    Get the name of the country 
+    by the country code 
+  */
+
+  _getCountryName(code) {
+    const obj = this._getCountryData(code)
+    return Object.keys(obj).map(key => {
+      if(key === "FIELD1") {
+        return obj[key]
+      }
+    });
+  }
+
   _convertObjectDataToArray(obj) {
     let values = [];
     for(let y in obj) {
@@ -96,6 +111,7 @@ export default class App extends React.Component {
     }
     return values;
   }
+  
 
   /* 
     Populate the graph data by creating 
@@ -136,21 +152,23 @@ export default class App extends React.Component {
     Update the graph data with a provided value 
   */
 
-  _updateGraphData(val) {
+  _updateCountryData(val) {
     if(val != "") {
       this.setState({
         graphData:  this._populateGraphData(
                       this._convertObjectDataToArray(population[0]),
                       this._convertObjectDataToArray(this._getCountryData(val))
                     ),
-        country: val
+        countryCode: val,
+        country: this._getCountryName(val),
+        yearCountryPopul: "",
+        countryPopul: 0
       });
     }
   }
 
 
   _updateWorldPopul(year) {
-    //console.log(year);
     this.setState({
       worldPopul: this._worldPopulation(year, population),
       yearWorldPopul: year
@@ -160,10 +178,11 @@ export default class App extends React.Component {
 
 
   _updateCountryPopul(year) {
-    console.log(year);
-    console.log(this.state.country);
-    const countryPopul = this._getCountryData(this.state.country)[this._getYearField(year, population[0])].toLocaleString()
-
+    const field = this._getYearField(year, population[0]);
+    let countryPopul = this._getCountryData(this.state.countryCode)[field].toLocaleString();
+    if(countryPopul === "") {
+      countryPopul = 0;
+    }
     this.setState({
       countryPopul,
       yearCountryPopul: year
@@ -202,43 +221,48 @@ export default class App extends React.Component {
 
 
   render () {
-    console.log(this.state.yearWorldPopul);
     return (
-      <div className="container main">
-        <h1>World population</h1>
-          <div className="">
-            <Card 
-              amount={this.state.worldPopul.toLocaleString()}
-              dataOptions={this._getYears(population[0])}
-              update={this._updateWorldPopul.bind(this)}
-              title={"World Population in"}
-              value={this.state.yearWorldPopul}
-            />
+      <div className="main">
+        <div className="container">
+          <h1 className="text-xs-center">World population</h1>
+          <div className="row">
+            <div className="col-md-6">
+              <Card 
+                text={this.state.worldPopul.toLocaleString()}
+                dataOptions={this._getYears(population[0])}
+                update={this._updateWorldPopul.bind(this)}
+                title={"World Population in"}
+                value={this.state.yearWorldPopul}
+                placeholder="Select Country"
+              />
+            </div>
+
+            <div className="col-md-6">
+              <Card 
+                text={this.state.country}
+                dataOptions={this._selectOptionData()}
+                update={this._updateCountryData.bind(this)}
+                title="Country"
+                value={this.state.countryCode}
+                placeholder="Select Country"
+              />
+              <Card 
+                text={this.state.countryPopul.toLocaleString()}
+                dataOptions={this._getYears(population[0])}
+                update={this._updateCountryPopul.bind(this)}
+                title="Population in"
+                value={this.state.yearCountryPopul}
+                placeholder="Select Year"
+              />
+              <LineChart 
+                data={this.state.graphData}
+                countryData={this._convertObjectDataToArray(
+                              this._getCountryData(this.state.countryCode))}
+              />
+            </div>
           </div>
-
-          <Select
-            name="form-field-name"
-            maxHeight="300"
-            placeholder="Select Country"
-            value={this.state.country}
-            options={this._selectOptionData()}
-            onChange={this._updateGraphData.bind(this)}
-          />
-          <Card 
-            amount={this.state.countryPopul.toLocaleString()}
-            dataOptions={this._getYears(population[0])}
-            update={this._updateCountryPopul.bind(this)}
-            title={"Country Population in"}
-            value={this.state.yearCountryPopul}
-          />
-    
-          <LineChart 
-            data={this.state.graphData}
-            countryData={this._convertObjectDataToArray(this._getCountryData())}
-          />
-
+        </div>
       </div> 
-      
     )
   }
 }
