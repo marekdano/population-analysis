@@ -1,11 +1,10 @@
 {
-  "name": "webpack-heroku-boilerplate",
+  "name": "population-analysis",
   "version": "1.0.0",
-  "description": "Simplest Heroku starter kit for React apps.",
+  "description": "Demo application with React and Victory graph library",
   "main": "./src/entry.js",
-  "homepage": "https://github.com/wallacyyy/webpack-heroku",
-  "author": "Leonardo Couto",
-  "license": "MIT",
+  "homepage": "https://github.com/marekdano/population-analysis",
+  "author": "Marek Dano",
   "scripts": {
     "build": "NODE_ENV=production webpack --config ./webpack.prod.config.js --progress --colors",
     "start": "node ./app.js"
