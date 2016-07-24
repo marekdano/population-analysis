@@ -7,7 +7,7 @@ export default class Flyout extends React.Component {
   };
 
   getFlyoutPath(props) {
-    //console.log(props);
+    //console.log(props.index);
     const padding = -2;
     const size = 10;
     const y = props.y + padding;
@@ -24,8 +24,14 @@ export default class Flyout extends React.Component {
     //console.log(this.props.text);
     const path = this.getFlyoutPath(this.props);
     const pathStyle = {stroke: "teal", fill: "teal"};
+    
+    //console.log(this.props);
+    //console.log(this.props.active);
+    //console.log(this.props.index);
+
     const group = (
       //<path d={path} style={pathStyle}/>
+      
       <g>
         <path style={pathStyle}/>
         <VictoryLabel {...this.props}/>

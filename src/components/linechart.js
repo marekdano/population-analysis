@@ -101,6 +101,8 @@ export default class LineChart extends React.Component {
                     {
                       target: "labels",
                       mutation: () => {
+                        //console.log(this);
+
                         return {active: true};
                       }
                     }, {
@@ -122,7 +124,7 @@ export default class LineChart extends React.Component {
                     }, {
                       mutation: (props) => {
                         return { style:
-                          Object.assign({}, props.style, {fill: "teal"})
+                          Object.assign({}, props.style, {fill: "white"})
                         };
                       }
                     }
